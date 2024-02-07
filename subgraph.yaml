@@ -1,0 +1,260 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: FarmFactory
+    network: arbitrum-one
+    source:
+      address: "0xC4fb09E0CD212367642974F6bA81D8e23780A659"
+      abi: FarmFactory
+      # startBlock: 89947647
+      startBlock: 137132534 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - FarmDeployerRegistered
+        - FarmDeployerRemoved
+        - FarmRegistered
+        - FeeParamsUpdated
+        - Initialized
+        - OwnershipTransferred
+        - PrivilegeUpdated
+      abis:
+        - name: FarmFactory
+          file: ./abis/FarmFactory.json
+      eventHandlers:
+        - event: FarmDeployerRegistered(address)
+          handler: handleFarmDeployerRegistered
+        - event: FarmDeployerRemoved(address)
+          handler: handleFarmDeployerRemoved
+        - event: FarmRegistered(indexed address,indexed address,indexed address)
+          handler: handleFarmRegistered
+        - event: FeeParamsUpdated(address,address,uint256)
+          handler: handleFeeParamsUpdated
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PrivilegeUpdated(address,bool)
+          handler: handlePrivilegeUpdated
+      file: ./src/farm-factory.ts
+  - kind: ethereum
+    name: CamelotFarmDeployer
+    network: arbitrum-one
+    source:
+      address: "0x5740DE935df8Ea751d95334C8FC8AB68205E3cb6"
+      abi: CamelotFarmDeployer
+      # startBlock: 89947647
+      startBlock: 137132534 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DiscountedFeeUpdated
+        - FarmCreated
+        - FarmImplementationUpdated
+        - FeeCollected
+        - CamelotFarmDeployerOwnershipTransferred
+      abis:
+        - name: CamelotFarmDeployer
+          file: ./abis/CamelotFarmDeployer.json
+      eventHandlers:
+        - event: DiscountedFeeUpdated(uint256,uint256)
+          handler: handleDiscountedFeeUpdated
+        - event: FarmCreated(address,address,indexed address)
+          handler: handleFarmCreated
+        - event: FarmImplementationUpdated(address)
+          handler: handleFarmImplementationUpdated
+        - event: FeeCollected(indexed address,address,uint256,indexed bool)
+          handler: handleFeeCollected
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/camelot-farm-deployer.ts
+  - kind: ethereum
+    name: UniV3FarmDeployer
+    network: arbitrum-one
+    source:
+      address: "0x661c4EB1f99AC53b189949b0f615686dBb21d66E"
+      abi: UniV3FarmDeployer
+      # startBlock: 89947647
+      startBlock: 137132534 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - UniV3FarmDeployerDiscountedFeeUpdated
+        - UniV3FarmDeployerFarmCreated
+        - UniV3FarmDeployerFarmImplementationUpdated
+        - UniV3FarmDeployerFeeCollected
+        - UniV3FarmDeployerOwnershipTransferred
+      abis:
+        - name: UniV3FarmDeployer
+          file: ./abis/UniV3FarmDeployer.json
+      eventHandlers:
+        - event: DiscountedFeeUpdated(uint256,uint256)
+          handler: handleDiscountedFeeUpdated
+        - event: FarmCreated(address,address,indexed address)
+          handler: handleFarmCreated
+        - event: FarmImplementationUpdated(address)
+          handler: handleFarmImplementationUpdated
+        - event: FeeCollected(indexed address,address,uint256,indexed bool)
+          handler: handleFeeCollected
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/uni-v-3-farm-deployer.ts
+templates:
+  - kind: ethereum
+    name: CamelotFarm
+    network: arbitrum-one
+    source:
+      abi: CamelotFarm
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CooldownInitiated
+        - CooldownPeriodUpdated
+        - DepositWithdrawn
+        - Deposited
+        - FarmClosed
+        - FarmPaused
+        - FarmStartTimeUpdated
+        - FundsRecovered
+        - CamelotFarmInitialized
+        - CamelotFarmOwnershipTransferred
+        - PoolRewardsCollected
+        - PoolUnsubscribed
+        - RecoveredERC20
+        - RewardAdded
+        - RewardRateUpdated
+        - RewardTokenAdded
+        - RewardsClaimed
+        - TokenManagerUpdated
+      abis:
+        - name: CamelotFarm
+          file: ./abis/CamelotFarm.json
+        - name: NftPoolCamelot
+          file: ./abis/NftPoolCamelot.json
+        - name: camelotPair
+          file: ./abis/camelotPair.json
+        - name: erc20
+          file: ./abis/erc20contract.json
+      eventHandlers:
+        - event: CooldownInitiated(indexed address,uint256,uint256)
+          handler: handleCooldownInitiated
+        - event: CooldownPeriodUpdated(uint256,uint256)
+          handler: handleCooldownPeriodUpdated
+        - event: DepositWithdrawn(indexed address,uint256,uint256,uint256,uint256[])
+          handler: handleDepositWithdrawn
+        - event: Deposited(indexed address,bool,uint256,uint256)
+          handler: handleDeposited
+        - event: FarmClosed()
+          handler: handleFarmClosed
+        - event: FarmPaused(bool)
+          handler: handleFarmPaused
+        - event: FarmStartTimeUpdated(uint256)
+          handler: handleFarmStartTimeUpdated
+        - event: FundsRecovered(indexed address,address,uint256)
+          handler: handleFundsRecovered
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PoolRewardsCollected(indexed address,indexed uint256,uint256,uint256)
+          handler: handlePoolRewardsCollected
+        - event: PoolUnsubscribed(indexed address,uint8,uint256,uint256,uint256[])
+          handler: handlePoolUnsubscribed
+        - event: RecoveredERC20(address,uint256)
+          handler: handleRecoveredERC20
+        - event: RewardAdded(address,uint256)
+          handler: handleRewardAdded
+        - event: RewardRateUpdated(address,uint256[],uint256[])
+          handler: handleRewardRateUpdated
+        - event: RewardTokenAdded(address,address)
+          handler: handleRewardTokenAdded
+        - event: RewardsClaimed(indexed address,uint8,uint256,uint256,uint256,uint256[])
+          handler: handleRewardsClaimed
+        - event: TokenManagerUpdated(address,address,address)
+          handler: handleTokenManagerUpdated
+      file: ./src/camelot-farm.ts
+  - kind: ethereum
+    name: UniV3Farm
+    network: arbitrum-one
+    source:
+      abi: UniV3Farm
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - UniV3FarmCooldownInitiated
+        - UniV3FarmCooldownPeriodUpdated
+        - UniV3FarmDepositWithdrawn
+        - UniV3FarmDeposited
+        - UniV3FarmFarmClosed
+        - UniV3FarmFarmPaused
+        - UniV3FarmFarmStartTimeUpdated
+        - UniV3FarmFundsRecovered
+        - UniV3FarmInitialized
+        - UniV3FarmOwnershipTransferred
+        - PoolFeeCollected
+        - UniV3FarmPoolUnsubscribed
+        - UniV3FarmRecoveredERC20
+        - UniV3FarmRewardAdded
+        - UniV3FarmRewardRateUpdated
+        - UniV3FarmRewardTokenAdded
+        - UniV3FarmRewardsClaimed
+        - UniV3FarmTokenManagerUpdated
+      abis:
+        - name: UniV3Farm
+          file: ./abis/UniV3Farm.json
+        - name: NonFungiblePositionManager
+          file: ./abis/NonFungiblePositionManager.json
+        - name: erc20
+          file: ./abis/erc20contract.json
+        - name: v3Pool
+          file: ./abis/v3Pool.json
+      eventHandlers:
+        - event: CooldownInitiated(indexed address,uint256,uint256)
+          handler: handleCooldownInitiated
+        - event: CooldownPeriodUpdated(uint256,uint256)
+          handler: handleCooldownPeriodUpdated
+        - event: DepositWithdrawn(indexed address,uint256,uint256,uint256,uint256[])
+          handler: handleDepositWithdrawn
+        - event: Deposited(indexed address,bool,uint256,uint256)
+          handler: handleDeposited
+        - event: FarmClosed()
+          handler: handleFarmClosed
+        - event: FarmPaused(bool)
+          handler: handleFarmPaused
+        - event: FarmStartTimeUpdated(uint256)
+          handler: handleFarmStartTimeUpdated
+        - event: FundsRecovered(indexed address,address,uint256)
+          handler: handleFundsRecovered
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PoolFeeCollected(indexed address,uint256,uint256,uint256)
+          handler: handlePoolFeeCollected
+        - event: PoolUnsubscribed(indexed address,uint8,uint256,uint256,uint256[])
+          handler: handlePoolUnsubscribed
+        - event: RecoveredERC20(address,uint256)
+          handler: handleRecoveredERC20
+        - event: RewardAdded(address,uint256)
+          handler: handleRewardAdded
+        - event: RewardRateUpdated(address,uint256[],uint256[])
+          handler: handleRewardRateUpdated
+        - event: RewardTokenAdded(address,address)
+          handler: handleRewardTokenAdded
+        - event: RewardsClaimed(indexed address,uint8,uint256,uint256,uint256,uint256[])
+          handler: handleRewardsClaimed
+        - event: TokenManagerUpdated(address,address,address)
+          handler: handleTokenManagerUpdated
+      file: ./src/uni-v-3-farm.ts

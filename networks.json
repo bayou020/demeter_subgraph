@@ -1,0 +1,23 @@
+{
+  "arbitrum-one": {
+    "FarmFactory": {
+      "address": "0xC4fb09E0CD212367642974F6bA81D8e23780A659",
+      "startBlock": 27001371
+    },
+    "CamelotFarmDeployer": {
+      "address": "0x5740DE935df8Ea751d95334C8FC8AB68205E3cb6"
+    },
+    "Contract": {
+      "address": "0x661c4EB1f99AC53b189949b0f615686dBb21d66E"
+    },
+    "UniV3FarmDeployer": {
+      "address": "0x661c4EB1f99AC53b189949b0f615686dBb21d66E"
+    },
+    "CamelotFarm": {
+      "address": "0x661c4EB1f99AC53b189949b0f615686dBb21d66E"
+    },
+    "UniV3Farm": {
+      "address": "0x661c4EB1f99AC53b189949b0f615686dBb21d66E"
+    }
+  }
+}

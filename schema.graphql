@@ -1,0 +1,692 @@
+#           .*//((                      
+#            .*//////                    
+#            .*/*////(/.                 
+#             ,,.,///////.               
+#               ...,///(/(//.            
+#              .,,  .,*//(////,          
+#              .*,,.   ,*////(//*.       
+#                .**..   .**////////     
+#     .,,,,,,,,,*,  .*,.   .,*//((//((.  
+# ,**//////////((((,   **,.   .,//////(( 
+# ,//(///(/////////////  ,/,.    ,*///(##
+#//////////**,.,,*//////,  .**,   .,*////
+#(/(/(/(//,.  .,**,**////(*.  **,   ,////
+#(////////,  .,**    ,///(//// ,*,. .,*//
+#////(////,.  ,**    .*//(/(((   **..,/((
+#//////////*....*.             ,*//,,*//#
+#//((((((((//*,..,***          *//////// 
+# .//////(///////****////((////////(((   
+#   .////(///(///(///////(///(//////     
+#      //////////(///////(///(((/(       
+#            .,///////////   
+
+type FarmInfo @entity(immutable: false) {
+  id: Bytes!
+  farmAddress: Bytes! # address
+  farmName: String! # string
+  version: Int! # bigInt
+  versionName: String! # string
+  rewardTokens: [RewardData!] @derivedFrom(field: "farm")
+  startTime: BigInt! # bigInt
+  cooldownPeriod: BigInt! # bigInt
+  stats: [FarmStat!]! @derivedFrom(field: "farm")
+  deposited:[Deposit!] @derivedFrom(field: "farm")
+  withdrawn:[Withdraw!] @derivedFrom(field: "farm")
+  TransactionData: TransactionData!
+  metadata:Metadata!
+}
+
+type Deposit @entity(immutable: false) {
+id: Bytes!
+farm: FarmInfo! # farmInfo
+user: Bytes! # address
+liquidity: BigInt! # bigInt
+tokenId: BigInt! # bigInt
+depositId: Withdraw! # bytes
+locked: Boolean! # bool
+TransactionData: TransactionData!
+
+}
+type FarmStat @entity(immutable: false) {
+id: Bytes! 
+farm: FarmInfo! # farmInfo
+status: String! # string
+TransactionData: TransactionData!
+}
+
+type TransactionData @entity(immutable: false) {
+  id: Bytes!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardData @entity {
+  id: Bytes!
+  farm: [FarmInfo!]! # farmInfo
+  token: [Token!]! # token[] @derivedFrom(field: "farm")
+  tokenManager: Bytes!
+  tokenName: String!
+  addedRewards:BigDecimal!
+  tokenRates: [BigInt!]!
+  TransactionData: TransactionData!
+}
+
+type Token @entity(immutable: false) {
+  id: Bytes!
+  farm: [FarmInfo!]! # farmInfo
+  address: Bytes! # address
+  symbol: String! # string
+  decimals: BigInt! # uint8
+}
+type UniV3Metadata @entity(immutable: false) {
+id: Bytes!
+farm:Bytes!
+tokens: [Token!]! # token[] @derivedFrom(field: "farm")
+poolAddress: Bytes!
+tickUpper: BigInt!
+tickLower: BigInt!
+poolFee: BigInt!
+metadata: Metadata!
+}
+
+#type UniV2Metadata @entity(immutable: false) {
+#id: Bytes!
+#farm:Bytes!
+#poolAddress: Bytes!
+#tickUpper: BigInt!
+#tickLower: BigInt!
+#metadata: Metadata!
+#}
+
+#type BalancerMetadata @entity(immutable: false) {
+#id: Bytes!
+#farm:Bytes!
+#poolAddress: Bytes!
+#tickUpper: BigInt!
+#tickLower: BigInt!
+#metadata: Metadata!
+#}
+type CamelotMetadata @entity(immutable: false) {
+id: Bytes!
+farm:Bytes!
+tokens: [Token!]! # token[] @derivedFrom(field: "farm")
+poolAddress: Bytes!
+lpToken: Bytes!
+metadata: Metadata!
+}
+
+type Metadata @entity(immutable: false) {
+id: Bytes!
+uniV3Metadata: UniV3Metadata @derivedFrom(field: "metadata")
+#uniV2Metadata: UniV2Metadata @derivedFrom(field: "metadata")
+camelotMetadata: CamelotMetadata @derivedFrom(field: "metadata")
+#balancerMetadata: BalancerMetadata @derivedFrom(field: "metadata")
+
+}
+
+
+
+type Withdraw @entity(immutable: false) {
+id: Bytes!
+farm: FarmInfo! # farmInfo
+user: Bytes! # address
+deposit: Deposit! @derivedFrom(field: "depositId")
+liquidity: BigInt! # bigInt
+tokenId: BigInt! # bigInt
+totalRewardsClaimed: [BigInt!]! # bigInt
+TransactionData: TransactionData!
+
+}
+
+
+type FarmDeployerRegistered @entity(immutable: false) {
+  id: Bytes!
+  deployer: Bytes! # address
+  TransactionData: TransactionData!
+}
+
+type FarmDeployerRemoved @entity(immutable: false) {
+  id: Bytes!
+  deployer: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmRegistered @entity(immutable: false) {
+  id: Bytes!
+  farm: Bytes! # address
+  creator: Bytes! # address
+  deployer: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FeeParamsUpdated @entity(immutable: false) {
+  id: Bytes!
+  receiver: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Initialized @entity(immutable: false) {
+  id: Bytes!
+  version: Int! # uint8
+  TransactionData: TransactionData!
+}
+type InitializedFactory @entity(immutable: false) {
+  id: Bytes!
+  version: Int! # uint8
+  TransactionData: TransactionData!
+}
+
+type OwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PrivilegeUpdated @entity(immutable: false) {
+  id: Bytes!
+  deployer: Bytes! # address
+  privilege: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type DiscountedFeeUpdated @entity(immutable: false) {
+  id: Bytes!
+  oldDiscountedFee: BigInt! # uint256
+  newDiscountedFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmCreated @entity(immutable: false) {
+  id: Bytes!
+  farm: Bytes! # address
+  creator: Bytes! # address
+  admin: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmImplementationUpdated @entity(immutable: false) {
+  id: Bytes!
+  newFarmImplementation: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FeeCollected @entity(immutable: false) {
+  id: Bytes!
+  creator: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  claimable: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CamelotFarmDeployerOwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type ContractDiscountedFeeUpdated @entity(immutable: false) {
+  id: Bytes!
+  oldDiscountedFee: BigInt! # uint256
+  newDiscountedFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContractFarmCreated @entity(immutable: false) {
+  id: Bytes!
+  farm: Bytes! # address
+  creator: Bytes! # address
+  admin: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContractFarmImplementationUpdated @entity(immutable: false) {
+  id: Bytes!
+  newFarmImplementation: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContractFeeCollected @entity(immutable: false) {
+  id: Bytes!
+  creator: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  claimable: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContractOwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type UniV3FarmDeployerDiscountedFeeUpdated @entity(immutable: false) {
+  id: Bytes!
+  oldDiscountedFee: BigInt! # uint256
+  newDiscountedFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDeployerFarmCreated @entity(immutable: false) {
+  id: Bytes!
+  farm: Bytes! # address
+  creator: Bytes! # address
+  admin: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDeployerFarmImplementationUpdated @entity(immutable: false) {
+  id: Bytes!
+  newFarmImplementation: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDeployerFeeCollected @entity(immutable: false) {
+  id: Bytes!
+  creator: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  claimable: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDeployerOwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type CooldownInitiated @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  tokenId: BigInt! # uint256
+  expiryDate: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CooldownPeriodUpdated @entity(immutable: false) {
+  id: Bytes!
+  oldCooldownPeriod: BigInt! # uint256
+  newCooldownPeriod: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DepositWithdrawn @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  tokenId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  totalRewardsClaimed: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Deposited @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  locked: Boolean! # bool
+  tokenId: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmClosed @entity(immutable: false) {
+  id: Bytes!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmPaused @entity(immutable: false) {
+  id: Bytes!
+  paused: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FarmStartTimeUpdated @entity(immutable: false) {
+  id: Bytes!
+  newStartTime: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FundsRecovered @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  rwdToken: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CamelotFarmInitialized @entity(immutable: false) {
+  id: Bytes!
+  version: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CamelotFarmOwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PoolRewardsCollected @entity(immutable: false) {
+  id: Bytes!
+  recipient: Bytes! # address
+  tokenId: BigInt! # uint256
+  grailAmt: BigInt! # uint256
+  xGrailAmt: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PoolUnsubscribed @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  fundId: Int! # uint8
+  depositId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  totalRewardsClaimed: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RecoveredERC20 @entity(immutable: false) {
+  id: Bytes!
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardAdded @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardRateUpdated @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  oldRewardRate: [BigInt!]! # uint256[]
+  newRewardRate: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardTokenAdded @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  rwdTokenManager: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardsClaimed @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  fundId: Int! # uint8
+  tokenId: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  fundLiquidity: BigInt! # uint256
+  rewardAmount: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenManagerUpdated @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  oldTokenManager: Bytes! # address
+  newTokenManager: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type UniV3FarmCooldownInitiated @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  tokenId: BigInt! # uint256
+  expiryDate: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmCooldownPeriodUpdated @entity(immutable: false) {
+  id: Bytes!
+  oldCooldownPeriod: BigInt! # uint256
+  newCooldownPeriod: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDepositWithdrawn @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  tokenId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  totalRewardsClaimed: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmDeposited @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  locked: Boolean! # bool
+  tokenId: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmFarmClosed @entity(immutable: false) {
+  id: Bytes!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmFarmPaused @entity(immutable: false) {
+  id: Bytes!
+  paused: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmFarmStartTimeUpdated @entity(immutable: false) {
+  id: Bytes!
+  newStartTime: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmFundsRecovered @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  rwdToken: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmInitialized @entity(immutable: false) {
+  id: Bytes!
+  version: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmOwnershipTransferred @entity(immutable: false) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PoolFeeCollected @entity(immutable: false) {
+  id: Bytes!
+  recipient: Bytes! # address
+  tokenId: BigInt! # uint256
+  amt0Recv: BigInt! # uint256
+  amt1Recv: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmPoolUnsubscribed @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  fundId: Int! # uint8
+  depositId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  totalRewardsClaimed: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmRecoveredERC20 @entity(immutable: false) {
+  id: Bytes!
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmRewardAdded @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmRewardRateUpdated @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  oldRewardRate: [BigInt!]! # uint256[]
+  newRewardRate: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmRewardTokenAdded @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  rwdTokenManager: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmRewardsClaimed @entity(immutable: false) {
+  id: Bytes!
+  account: Bytes! # address
+  fundId: Int! # uint8
+  tokenId: BigInt! # uint256
+  liquidity: BigInt! # uint256
+  fundLiquidity: BigInt! # uint256
+  rewardAmount: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UniV3FarmTokenManagerUpdated @entity(immutable: false) {
+  id: Bytes!
+  rwdToken: Bytes! # address
+  oldTokenManager: Bytes! # address
+  newTokenManager: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

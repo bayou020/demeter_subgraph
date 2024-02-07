@@ -1,0 +1,56 @@
+import {
+  assert,
+  describe,
+  test,
+  clearStore,
+  beforeAll,
+  afterAll
+} from "matchstick-as/assembly/index"
+import { BigInt, Address } from "@graphprotocol/graph-ts"
+import { DiscountedFeeUpdated } from "../generated/schema"
+import { DiscountedFeeUpdated as DiscountedFeeUpdatedEvent } from "../generated/UniV3FarmDeployer/UniV3FarmDeployer"
+import { handleDiscountedFeeUpdated } from "../src/uni-v-3-farm-deployer"
+import { createDiscountedFeeUpdatedEvent } from "./uni-v-3-farm-deployer-utils"
+
+// Tests structure (matchstick-as >=0.5.0)
+// https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
+
+describe("Describe entity assertions", () => {
+  beforeAll(() => {
+    let oldDiscountedFee = BigInt.fromI32(234)
+    let newDiscountedFee = BigInt.fromI32(234)
+    let newDiscountedFeeUpdatedEvent = createDiscountedFeeUpdatedEvent(
+      oldDiscountedFee,
+      newDiscountedFee
+    )
+    handleDiscountedFeeUpdated(newDiscountedFeeUpdatedEvent)
+  })
+
+  afterAll(() => {
+    clearStore()
+  })
+
+  // For more test scenarios, see:
+  // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
+
+  test("DiscountedFeeUpdated created and stored", () => {
+    assert.entityCount("DiscountedFeeUpdated", 1)
+
+    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
+    assert.fieldEquals(
+      "DiscountedFeeUpdated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "oldDiscountedFee",
+      "234"
+    )
+    assert.fieldEquals(
+      "DiscountedFeeUpdated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "newDiscountedFee",
+      "234"
+    )
+
+    // More assert options:
+    // https://thegraph.com/docs/en/developer/matchstick/#asserts
+  })
+})
